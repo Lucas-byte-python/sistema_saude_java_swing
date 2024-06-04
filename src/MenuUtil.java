@@ -10,14 +10,12 @@ public class MenuUtil {
         JMenu homeMenu = new JMenu("Home");
         JMenu consultaMenu = new JMenu("Consulta");
         JMenu planosMenu = new JMenu("Planos");
-        JMenu agendamentoMenu = new JMenu("Agendamento");
-        JMenu loginMenu = new JMenu("Login");
+        JMenu usuarioMenu = new JMenu("Usuário");
 
         menuBar.add(homeMenu);
         menuBar.add(consultaMenu);
         menuBar.add(planosMenu);
-        menuBar.add(agendamentoMenu);
-        menuBar.add(loginMenu);
+        menuBar.add(usuarioMenu);
 
         homeMenu.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -40,17 +38,10 @@ public class MenuUtil {
             }
         });
 
-        agendamentoMenu.addMouseListener(new MouseAdapter() {
+        usuarioMenu.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 frame.dispose();
-                agendamento.main(null);
-            }
-        });
-
-        loginMenu.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                frame.dispose();
-                login_usu.main(null);
+                usuario.main(null);
             }
         });
 

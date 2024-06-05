@@ -1,5 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class cadastro_usu {
     public static void main(String[] args) {
@@ -51,10 +55,13 @@ public class cadastro_usu {
             if (!password.equals(confirmPassword)) {
                 JOptionPane.showMessageDialog(frame, "As senhas não coincidem!", "Erro", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Implementar lógica de cadastro aqui (por exemplo, salvar em um banco de dados)
-                JOptionPane.showMessageDialog(frame, "Cadastro realizado com sucesso!");
-                frame.dispose();
-                login_usu.main(null);
+                if (registerUser(name, email, password)) {
+                    JOptionPane.showMessageDialog(frame, "Cadastro realizado com sucesso!");
+                    frame.dispose();
+                    login_usu.main(null);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Erro ao realizar o cadastro. Tente novamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
         centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -63,7 +70,7 @@ public class cadastro_usu {
         frame.add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
-        JButton backButton = new JButton("Voltar");
+        JButton backButton = new JButton("Você já possui conta? Faça login aqui!");
         backButton.addActionListener(e -> {
             frame.dispose();
             login_usu.main(null);
@@ -73,5 +80,21 @@ public class cadastro_usu {
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+    }
+
+    private static boolean registerUser(String name, String email, String password) {
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
+
+        try (Connection conn = database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.setString(3, password); // Note: Consider hashing the password before storing it
+            pstmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

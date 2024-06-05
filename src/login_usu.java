@@ -2,6 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class login_usu {
     public static void main(String[] args) {
@@ -28,7 +32,7 @@ public class login_usu {
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new GridLayout(3, 2, 10, 10));
 
-        JLabel userLabel = new JLabel("Usuário:");
+        JLabel userLabel = new JLabel("Email:");
         JTextField userText = new JTextField(20);
         JLabel passwordLabel = new JLabel("Senha:");
         JPasswordField passwordText = new JPasswordField(20);
@@ -40,8 +44,10 @@ public class login_usu {
 
         frame.add(centerPanel, BorderLayout.CENTER);
 
-        // Painel inferior com o botão de login
+        // Painel inferior com os botões de login e cadastro
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout());
+
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -49,21 +55,48 @@ public class login_usu {
                 String username = userText.getText();
                 String password = new String(passwordText.getPassword());
 
-                // Aqui você pode adicionar a lógica de autenticação
-                if (username.equals("admin") && password.equals("admin")) {
+                // Verificar as credenciais no banco de dados
+                if (authenticateUser(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login bem-sucedido!");
                     frame.dispose(); // Fecha a tela de login
                     home.main(null); // Abre a tela de Home
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Usuário ou senha incorretos!");
+                    JOptionPane.showMessageDialog(frame, "Email ou Senha incorretos!");
                 }
             }
         });
+
+        JButton registerButton = new JButton("Cadastrar");
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose(); // Fecha a tela de login
+                cadastro_usu.main(null); // Abre a tela de cadastro
+            }
+        });
+
         bottomPanel.add(loginButton);
+        bottomPanel.add(registerButton);
 
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         // Tornar o frame visível
         frame.setVisible(true);
+    }
+
+    private static boolean authenticateUser(String username, String password) {
+        String sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+
+        try (Connection conn = database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next(); // Retorna true se houver um registro correspondente
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -23,8 +23,8 @@ public class login_usu {
         topPanel.add(titleLabel);
 
         // Adicionando uma imagem de logo
-        JLabel logoLabel = new JLabel(new ImageIcon("path/to/your/logo.png"));
-        topPanel.add(logoLabel);
+        // JLabel logoLabel = new JLabel(new ImageIcon("path/to/your/logo.png"));
+        // topPanel.add(logoLabel);
 
         frame.add(topPanel, BorderLayout.NORTH);
 
@@ -52,14 +52,14 @@ public class login_usu {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = userText.getText();
-                String password = new String(passwordText.getPassword());
+                String email = userText.getText();
+                String senha = new String(passwordText.getPassword());
 
                 // Verificar as credenciais no banco de dados
-                if (authenticateUser(username, password)) {
+                if (authenticateUser(email, senha)) {
                     JOptionPane.showMessageDialog(frame, "Login bem-sucedido!");
                     frame.dispose(); // Fecha a tela de login
-                    home.main(null); // Abre a tela de Home
+                    usuario.main(null); // Abre a tela de Usuário
                 } else {
                     JOptionPane.showMessageDialog(frame, "Email ou Senha incorretos!");
                 }
@@ -84,19 +84,24 @@ public class login_usu {
         frame.setVisible(true);
     }
 
-    private static boolean authenticateUser(String username, String password) {
-        String sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+    private static boolean authenticateUser(String email, String senha) {
+        String sql = "SELECT nome, email FROM usuarios WHERE email = ? AND senha = ?";
 
         try (Connection conn = database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
+            pstmt.setString(1, email);
+            pstmt.setString(2, senha);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return rs.next(); // Retorna true se houver um registro correspondente
+                if (rs.next()) {
+                    String nome = rs.getString("nome");
+                    String emailFromDb = rs.getString("email");
+                    confiConfig.logIn(nome, emailFromDb);
+                    return true;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 }

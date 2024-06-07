@@ -1,66 +1,68 @@
 import javax.swing.*;
 import java.awt.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class consulta {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Consulta - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(400, 300);
         frame.setLayout(new BorderLayout());
 
-        // Adiciona o menu
+        // Adicionar menu à tela
         MenuUtil.addMenu(frame);
 
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout());
-        JLabel titleLabel = new JLabel("Consulta");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        topPanel.add(titleLabel);
-
-        frame.add(topPanel, BorderLayout.NORTH);
-
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2, 10, 10)); // 10 pixels de espaçamento horizontal e vertical
 
         JLabel nameLabel = new JLabel("Nome:");
-        JTextField nameField = new JTextField(15); // Menos colunas
+        JTextField nameField = new JTextField();
         JLabel dateLabel = new JLabel("Data:");
-        JTextField dateField = new JTextField(8); // Menos colunas
+        JTextField dateField = new JTextField();
         JLabel doctorLabel = new JLabel("Médico:");
-        JTextField doctorField = new JTextField(15); // Menos colunas
-        JButton bookButton = new JButton("Agendar Consulta");
+        JTextField doctorField = new JTextField();
+        JButton bookButton = new JButton("Agendar");
+
+        inputPanel.add(nameLabel);
+        inputPanel.add(nameField);
+        inputPanel.add(dateLabel);
+        inputPanel.add(dateField);
+        inputPanel.add(doctorLabel);
+        inputPanel.add(doctorField);
+        inputPanel.add(bookButton);
+
+        frame.add(inputPanel, BorderLayout.CENTER);
 
         bookButton.addActionListener(e -> {
             String name = nameField.getText();
             String date = dateField.getText();
             String doctor = doctorField.getText();
 
-            JOptionPane.showMessageDialog(frame, "Consulta agendada com sucesso!\nNome: " + name + "\nData: " + date + "\nMédico: " + doctor);
+            if (insertConsulta(name, date, doctor)) {
+                JOptionPane.showMessageDialog(frame, "Consulta agendada com sucesso!\nNome: " + name + "\nData: " + date + "\nMédico: " + doctor);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Erro ao agendar consulta.");
+            }
         });
-
-        centerPanel.add(nameLabel);
-        centerPanel.add(nameField);
-        centerPanel.add(dateLabel);
-        centerPanel.add(dateField);
-        centerPanel.add(doctorLabel);
-        centerPanel.add(doctorField);
-        centerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        centerPanel.add(bookButton);
-
-        frame.add(centerPanel, BorderLayout.CENTER);
-
-        JPanel bottomPanel = new JPanel();
-        JButton backButton = new JButton("Voltar");
-        backButton.addActionListener(e -> {
-            frame.dispose();
-            home.main(null);
-        });
-        bottomPanel.add(backButton);
-
-        frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+    }
+
+    private static boolean insertConsulta(String name, String date, String doctor) {
+        String sql = "INSERT INTO consultas (nome, data, medico) VALUES (?, ?, ?)";
+
+        try (Connection conn = database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, date);
+            pstmt.setString(3, doctor);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

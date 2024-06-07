@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class planos {
+    private static JLabel selectedPlanLabel;
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Planos - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,6 +47,8 @@ public class planos {
         JButton mensalButton = new JButton("Escolher Plano Mensal");
         mensalButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         mensalButton.addActionListener(e -> {
+            planosSelecionado.setPlano("Plano Mensal");
+            updateSelectedPlanLabel();
             JOptionPane.showMessageDialog(frame, "Plano Mensal selecionado!");
         });
         mensalPanel.add(mensalButton);
@@ -74,6 +78,8 @@ public class planos {
         JButton anualButton = new JButton("Escolher Plano Anual");
         anualButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         anualButton.addActionListener(e -> {
+            planosSelecionado.setPlano("Plano Anual");
+            updateSelectedPlanLabel();
             JOptionPane.showMessageDialog(frame, "Plano Anual selecionado!");
         });
         anualPanel.add(anualButton);
@@ -83,7 +89,24 @@ public class planos {
         frame.add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+
+        selectedPlanLabel = new JLabel();
+        selectedPlanLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        updateSelectedPlanLabel();
+        bottomPanel.add(selectedPlanLabel);
+
+        JButton cancelPlanButton = new JButton("Cancelar Plano");
+        cancelPlanButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cancelPlanButton.addActionListener(e -> {
+            planosSelecionado.setPlano(null);
+            updateSelectedPlanLabel();
+            JOptionPane.showMessageDialog(frame, "Plano cancelado!");
+        });
+        bottomPanel.add(cancelPlanButton);
+
         JButton backButton = new JButton("Voltar");
+        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         backButton.addActionListener(e -> {
             frame.dispose();
             home.main(null);
@@ -93,5 +116,10 @@ public class planos {
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+    }
+
+    private static void updateSelectedPlanLabel() {
+        String planoAtivo = planosSelecionado.getPlano() != null ? planosSelecionado.getPlano() : "Nenhum plano selecionado";
+        selectedPlanLabel.setText("Plano Ativo: " + planoAtivo);
     }
 }

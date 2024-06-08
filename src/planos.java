@@ -105,14 +105,6 @@ public class planos {
         });
         bottomPanel.add(cancelPlanButton);
 
-        JButton backButton = new JButton("Voltar");
-        backButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        backButton.addActionListener(e -> {
-            frame.dispose();
-            home.main(null);
-        });
-        bottomPanel.add(backButton);
-
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);

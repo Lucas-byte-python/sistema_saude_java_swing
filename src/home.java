@@ -15,7 +15,7 @@ public class home {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Plano de Saúde XYZ", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("Plano de Saúde Viver-Bem", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         topPanel.add(titleLabel, BorderLayout.NORTH);
 
@@ -26,18 +26,18 @@ public class home {
 
         // Painel central com informações e notícias
         JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new GridLayout(2, 1, 10, 10));
+        centerPanel.setLayout(new BorderLayout());
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Painel de informações
         JPanel infoPanel = new JPanel();
-        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setLayout(new BorderLayout());
 
-        JLabel InfoLabel = new JLabel("<html><div style='text-align: center;'>" +
-                "<h2>Bem-vindo ao Plano de Saúde XYZ</h2>" +
+        JLabel infoLabel = new JLabel("<html><div style='text-align: center;'>" +
+                "<h2>Bem-vindo ao Plano de Saúde Viver-Bem</h2>" +
                 "<p>Nosso plano de saúde oferece uma ampla gama de serviços para garantir o seu bem-estar e de sua família.</p>" +
-                "<h3>Serviços Oferecidos:</h3>" +
-                "<ul style='list-style-type: disc; padding-center: 20px;'>" +
+                "<h2>Serviços Oferecidos:</h2>" +
+                "<ul style='list-style-type: none; padding-left: 20px;'>" +
                 "<li>Consultas Médicas</li>" +
                 "<li>Exames Laboratoriais</li>" +
                 "<li>Cirurgias</li>" +
@@ -45,14 +45,19 @@ public class home {
                 "<li>Telemedicina</li>" +
                 "</ul>" +
                 "<h3>Contatos:</h3>" +
-                "<p>Email: atendimento@planosaude.xyz</p>" +
+                "<p>Email: planosaudeviverbem@gmail.com</p>" +
                 "<p>Telefone: (11) 1234-5678</p>" +
                 "</div></html>");
-        InfoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        InfoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        infoPanel.add(InfoLabel);
+        infoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        centerPanel.add(infoPanel);
+        // Adicionar o JLabel dentro de um JScrollPane
+        JScrollPane scrollPane = new JScrollPane(infoLabel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        infoPanel.add(scrollPane, BorderLayout.CENTER);
+        centerPanel.add(infoPanel, BorderLayout.CENTER);
 
         frame.add(centerPanel, BorderLayout.CENTER);
 

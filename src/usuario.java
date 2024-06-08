@@ -3,10 +3,16 @@ import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class usuario {
+    private static planosSelecionado planosSelecionado = new planosSelecionado();
+    private static JLabel userInfoLabel;
+    private static JFrame frame;
+
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Usuário - Plano de Saúde");
+        frame = new JFrame("Usuário - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLayout(new BorderLayout());
@@ -28,8 +34,7 @@ public class usuario {
         viewPanel.add(userLabel);
 
         // Informações do usuário
-        String planoAtivo = planosSelecionado.getPlano() != null ? planosSelecionado.getPlano() : "Sem plano escolhido";
-        JLabel userInfoLabel = new JLabel(getUserInfoHTML());
+        userInfoLabel = new JLabel(getUserInfoHTML());
         userInfoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         userInfoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewPanel.add(userInfoLabel);
@@ -53,6 +58,24 @@ public class usuario {
             cl.show(mainPanel, "editEmailPanel");
         });
         viewPanel.add(changeEmailButton);
+
+        // Botão de deletar conta
+        JButton deleteAccountButton = new JButton("Deletar Conta");
+        deleteAccountButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        deleteAccountButton.addActionListener(e -> {
+            int response = JOptionPane.showConfirmDialog(frame, "Tem certeza que deseja deletar sua conta?", "Confirmação", JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                if (deleteUserAccount()) {
+                    JOptionPane.showMessageDialog(frame, "Conta deletada com sucesso!");
+                    confiConfig.logOut();
+                    frame.dispose();
+                    login_usu.main(null);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Erro ao deletar a conta.");
+                }
+            }
+        });
+        viewPanel.add(deleteAccountButton);
 
         // Espaçamento entre botões
         viewPanel.add(Box.createVerticalStrut(20));
@@ -165,6 +188,7 @@ public class usuario {
 
     private static String getUserInfoHTML() {
         String planoAtivo = planosSelecionado.getPlano() != null ? planosSelecionado.getPlano() : "Sem plano escolhido";
+        String dataExpiracao = getExpirationDate();
         return "<html><div style='text-align: center;'>" +
                 "<h2>Bem-vindo, " + confiConfig.getNome() + "</h2>" +
                 "<p>Aqui você pode visualizar e atualizar suas informações pessoais.</p>" +
@@ -172,7 +196,7 @@ public class usuario {
                 "<p>Nome: " + confiConfig.getNome() + "</p>" +
                 "<p>Email: " + confiConfig.getEmail() + "</p>" +
                 "<p>Plano Ativo: " + planoAtivo + "</p>" +
-                "<p>Data de Expiração: 1 ano</p>" +
+                "<p>Data de Expiração: " + dataExpiracao + "</p>" +
                 "</div></html>";
     }
 
@@ -190,5 +214,36 @@ public class usuario {
             return false;
         }
     }
-}
 
+    private static boolean deleteUserAccount() {
+        String sql = "DELETE FROM usuarios WHERE email = ?";
+
+        try (Connection conn = database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, confiConfig.getEmail());
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static String getExpirationDate() {
+        String plano = planosSelecionado.getPlano();
+        if (plano == null) {
+            return "Sem data marcada";
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate expirationDate;
+        if (plano.equals("Plano Mensal")) {
+            expirationDate = today.plusMonths(1);
+        } else if (plano.equals("Plano Anual")) {
+            expirationDate = today.plusYears(1);
+        } else {
+            return "Sem data marcada";
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return expirationDate.format(formatter);
+    }
+}

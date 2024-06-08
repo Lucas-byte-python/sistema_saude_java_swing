@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class cadastro_usu {
@@ -52,10 +52,14 @@ public class cadastro_usu {
             String password = new String(passwordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
 
-            if (!password.equals(confirmPassword)) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Preencha as informações!", "Erro", JOptionPane.ERROR_MESSAGE);
+            } else if (!password.equals(confirmPassword)) {
                 JOptionPane.showMessageDialog(frame, "As senhas não coincidem!", "Erro", JOptionPane.ERROR_MESSAGE);
             } else {
-                if (registerUser(name, email, password)) {
+                if (isEmailRegistered(email)) {
+                    JOptionPane.showMessageDialog(frame, "Esse email já está cadastrado!", "Erro", JOptionPane.ERROR_MESSAGE);
+                } else if (registerUser(name, email, password)) {
                     JOptionPane.showMessageDialog(frame, "Cadastro realizado com sucesso!");
                     frame.dispose();
                     login_usu.main(null);
@@ -80,6 +84,23 @@ public class cadastro_usu {
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+    }
+
+    private static boolean isEmailRegistered(String email) {
+        String sql = "SELECT COUNT(*) FROM usuarios WHERE email = ?";
+        try (Connection conn = database.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private static boolean registerUser(String name, String email, String password) {

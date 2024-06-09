@@ -1,0 +1,21 @@
+create table medicamentos (
+	id serial primary key,
+	remedio varchar(40),
+	cidade varchar(40),
+	bairro varchar(40)
+)
+
+
+create table consultas (
+	id serial primary key,
+	nome varchar(60),
+	dat varchar(25),
+	medico varchar(40)
+)
+
+create table usuarios (
+	id serial primary key,
+	nome varchar(60),
+	email varchar(70),
+	senha varchar(20)
+)

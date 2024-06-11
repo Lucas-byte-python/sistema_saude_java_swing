@@ -9,9 +9,25 @@ import java.time.format.DateTimeFormatter;
 public class usuario {
     private static planosSelecionado planosSelecionado = new planosSelecionado();
     private static JLabel userInfoLabel;
+    private static JLabel planoLabel; // Adicionado para mostrar o plano selecionado
+    private static JLabel tempoRestanteLabel; // Adicionado para mostrar o tempo restante
     private static JFrame frame;
+    private String nome; // Atributo privado nome
+    private String email; // Atributo privado email
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public String getEmail() {
+        return email;
+    }
 
-    public static void main(String[] args) {
+    public static void createAndShowGUI() {
         frame = new JFrame("Usuário - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -38,6 +54,12 @@ public class usuario {
         userInfoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         userInfoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewPanel.add(userInfoLabel);
+
+        // Adiciona JLabels para plano e tempo restante
+        planoLabel = new JLabel();
+        tempoRestanteLabel = new JLabel();
+        viewPanel.add(planoLabel);
+        viewPanel.add(tempoRestanteLabel);
 
         // Espaçamento entre informações e botões
         viewPanel.add(Box.createVerticalStrut(20));
@@ -174,7 +196,7 @@ public class usuario {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, "viewPanel");
 
-        // Painel de contenção para centralizar mainPanel
+                // Painel de contenção para centralizar mainPanel
         JPanel containerPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -182,6 +204,7 @@ public class usuario {
         gbc.anchor = GridBagConstraints.CENTER;
         containerPanel.add(mainPanel, gbc);
 
+        // Adiciona o painel principal ao frame
         frame.add(containerPanel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
@@ -245,5 +268,21 @@ public class usuario {
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return expirationDate.format(formatter);
+    }
+
+    // Método para atualizar a exibição do plano selecionado na tela do usuário
+    public static void updatePlanoLabel() {
+        String planoSelecionado = planosSelecionado.getPlano();
+        if (planoSelecionado != null) {
+            planoLabel.setText("Plano Selecionado: " + planoSelecionado);
+        } else {
+            planoLabel.setText("Nenhum Plano Selecionado");
+        }
+    }
+
+    // Método para atualizar a exibição do tempo restante na tela do usuário
+    public static void updateTempoRestanteLabel() {
+        String dataExpiracao = getExpirationDate();
+        tempoRestanteLabel.setText("Tempo Restante: " + dataExpiracao);
     }
 }

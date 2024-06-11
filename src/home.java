@@ -2,7 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class home {
-    public static void main(String[] args) {
+    private String nome = "Consultoria Plano Saúde";
+    private String email = "consultoria@gmail.com";
+    private String telefone = "(85) 98484-8484";
+
+    public void createHomeUI() {
         JFrame frame = new JFrame("Home - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -45,8 +49,8 @@ public class home {
                 "<li>Telemedicina</li>" +
                 "</ul>" +
                 "<h3>Contatos:</h3>" +
-                "<p>Email: planosaudeviverbem@gmail.com</p>" +
-                "<p>Telefone: (11) 1234-5678</p>" +
+                "<p>Email: " + getEmail() + "</p>" +
+                "<p>Telefone: " + getTelefone() + "</p>" +
                 "</div></html>");
         infoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         infoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -72,5 +76,17 @@ public class home {
         frame.add(bottomPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
+    }
+
+    private String getNome() {
+        return nome;
+    }
+
+    private String getEmail() {
+        return email;
+    }
+
+    private String getTelefone() {
+        return telefone;
     }
 }

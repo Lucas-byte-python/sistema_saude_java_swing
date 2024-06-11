@@ -3,8 +3,26 @@ import java.awt.*;
 
 public class planos {
     private static JLabel selectedPlanLabel;
+    private String mensal;
+    private String anual;
 
-    public static void main(String[] args) {
+    public void setMensal(String mensal) {
+        this.mensal = mensal;
+    }
+
+    public String getMensal() {
+        return mensal;
+    }
+
+    public void setAnual(String anual) {
+        this.anual = anual;
+    }
+
+    public String getAnual() {
+        return anual;
+    }
+
+    public static void createAndShowGUI() {
         JFrame frame = new JFrame("Planos - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);

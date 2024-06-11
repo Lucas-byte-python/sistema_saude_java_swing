@@ -16,14 +16,15 @@ public class farmaceutico {
 
     private static Map<String, String[]> cityNeighborhoodMap;
 
-    public static void main(String[] args) {
+    private static String selectedMedicine;
+    private static String selectedCity;
+    private static String selectedNeighborhood;
+
+    public static void createAndShowGUI() {
         JFrame frame = new JFrame("Farmacêutico - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLayout(new BorderLayout());
-
-        // Adicionar menu à tela
-        MenuUtil.addMenu(frame);
 
         JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10)); // 10 pixels de espaçamento horizontal e vertical
         inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -73,9 +74,9 @@ public class farmaceutico {
         awaitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedMedicine = (String) medicineComboBox.getSelectedItem();
-                String selectedCity = (String) cityComboBox.getSelectedItem();
-                String selectedNeighborhood = (String) neighborhoodComboBox.getSelectedItem();
+                selectedMedicine = (String) medicineComboBox.getSelectedItem();
+                selectedCity = (String) cityComboBox.getSelectedItem();
+                selectedNeighborhood = (String) neighborhoodComboBox.getSelectedItem();
 
                 // Exibir mensagem com os itens escolhidos
                 JOptionPane.showMessageDialog(frame, "Remédio: " + selectedMedicine + "\nCidade: " + selectedCity + "\nBairro: " + selectedNeighborhood);
@@ -100,6 +101,9 @@ public class farmaceutico {
 
         frame.add(inputPanel, BorderLayout.CENTER);
         frame.setVisible(true);
+
+        // Adicionar o menu à janela
+        MenuUtil.addMenu(frame);
     }
 
     private static void updateNeighborhoods() {
@@ -154,7 +158,7 @@ public class farmaceutico {
     }
 
     private static void showDeleteDialog(JFrame parentFrame) {
-        // Cria um JDialog modal
+// Cria um JDialog modal
         JDialog deleteDialog = new JDialog(parentFrame, "Cancelar Remédio", true);
         deleteDialog.setSize(300, 150);
         deleteDialog.setLayout(new GridLayout(3, 1, 10, 10));
@@ -190,3 +194,4 @@ public class farmaceutico {
         deleteDialog.setVisible(true);
     }
 }
+

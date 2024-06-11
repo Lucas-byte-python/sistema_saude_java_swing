@@ -1,12 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
 
 public class consulta {
-    public static void main(String[] args) {
+    private static String nomeConsulta;
+    private static String dataConsulta;
+    private static String medicoConsulta;
+
+    public static void createAndShowGUI() {
         JFrame frame = new JFrame("Consulta - Plano de Saúde");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
@@ -81,8 +87,12 @@ public class consulta {
             String date = String.format("%04d-%02d-%02d", year, month, day);
             String doctor = (String) doctorComboBox.getSelectedItem();
 
+            nomeConsulta = name;
+            dataConsulta = date;
+            medicoConsulta = doctor;
+
             if (insertConsulta(name, date, doctor)) {
-                JOptionPane.showMessageDialog(frame, "Consulta agendada com sucesso!\nNome: " + name + "\nData: " + date + "\nMédico: " + doctor);
+                JOptionPane.showMessageDialog(frame, "Consulta agendada com sucesso!\nNome: " + nomeConsulta + "\nData: " + dataConsulta + "\nMédico: " + medicoConsulta);
             } else {
                 JOptionPane.showMessageDialog(frame, "Erro ao agendar consulta.");
             }
